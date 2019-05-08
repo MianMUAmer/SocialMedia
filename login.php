@@ -9,12 +9,14 @@
 
         <!-- Main css -->
         <link rel="stylesheet" href="css/style.css">
-        <script src="vendor/jquery/jquery.min.js" type="text/javascript"></script>
+        <script type=”text/javascript” src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="js/main.js"></script>
     </head>
     <body>
+        
         <div class="main">
             <!-- Sing in  Form -->
+            <div id="navBar">MUFASA</div>
             <section class="sign-in">
                 <div class="container">
                     <div class="signin-content">
@@ -28,11 +30,11 @@
                             <form method="POST" class="register-form" id="login-form">
                                 <div class="form-group">
                                     <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                    <input type="email" name="email" id="email" placeholder="Your Email"/>
+                                    <input type="email" required name="email" id="email" placeholder="Your Email"/>
                                 </div>
                                 <div class="form-group">
                                     <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                    <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                                    <input type="password" required name="your_pass" id="your_pass" placeholder="Password"/>
                                 </div>
                                 <div class="form-group">
                                     <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />

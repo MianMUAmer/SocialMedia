@@ -6,14 +6,15 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>MUFASA</title>
         <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
-
         <!-- Main css -->
         <link rel="stylesheet" href="css/style.css">
-        <script src="vendor/jquery/jquery.min.js" type="text/javascript"></script>
+        <script type=”text/javascript” src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="js/main.js"></script>
+
     </head>
     <body>
         <div class="main">
+            <div id="navBar">MUFASA</div>
             <!-- Sign up form -->
             <section class="signup">
                 <div class="container">
@@ -45,15 +46,16 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <i class="zmdi zmdi-calendar"></i><span style="padding-left: 10px;">Birthday : </span>
+                                    <i class="zmdi zmdi-cake"></i><span style="padding-left: 10px;">Birthday : </span>
                                     <input type="date" name="bday" id="bday" required>
                                 </div>
 
                                 <div>
                                     <p style="font-weight: 500; padding-bottom: 10px;"> Upload Profile Picture : </p>
-                                    <div style="border: 1px solid red; width: 150px; height: 150px;" id="canvas"></div>
-                                    <input type="file" name="fileupload" id='fileupload' accept='image/*' required> 
+                                    <img id='output' src="./images/download.png">
+                                    <input type='file' name="fileupload" id='fileupload' accept='image/*' onchange='openFile(event)' required>
                                 </div>
+
 
                                 <div class="form-group">
                                     <input type="checkbox" required name='agree-term' id="agree-term" class="agree-term"/>
