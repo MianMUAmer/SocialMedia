@@ -1,3 +1,22 @@
+<?php
+  session_start() ;
+  require_once './db.php';
+  
+    if ( isset($_POST["signupBtn"])) {
+       extract($_POST) ;
+       $pass = password_hash($pass, PASSWORD_BCRYPT) ;
+       $fulname = $name . ' ' . $srname;
+       try {
+           $stmt = $db->prepare("insert into userdetails (fullname, email, password, gender, bday, picture) values (?,?,?,?,?,?)") ;
+           $stmt->execute( [$fulname,$email, $pass, $Gender,$bday,$fileupload]) ;
+           header("Location: dashboard.php?newUser");
+           exit ;
+       } catch (Exception $ex) {
+          $error = true ;
+       }
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -21,7 +40,14 @@
                     <div class="signup-content">
                         <div class="signup-form">
                             <h2 class="form-title">Sign up</h2>
-                            <form method="POST" class="register-form" id="register-form">
+                            <div>
+                                <?php
+                                    if(isset($error)){
+                                        echo "<p style = 'color: red;'>Error : Email Address Already In Use</p>" ;
+                                    }
+                                ?>
+                            </div>
+                            <form method="POST" action="" class="register-form" id="register-form">
                                 <div class="form-group">
                                     <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                                     <input type="text" name="name" id="name" placeholder="Your Name" required/>
@@ -41,8 +67,8 @@
 
                                 <div class="form-group">
                                     <i class="zmdi zmdi-male-female"></i><span style="padding-left: 10px;">Gender : </span>
-                                    <input type="radio" name="Gender" value="0" id="rdbtn" required>Male
-                                    <input type="radio" name="Gender" value="0" id="rdbtn" required>Female
+                                    <input type="radio" name="Gender" value="Male" id="rdbtn" required>Male
+                                    <input type="radio" name="Gender" value="Female" id="rdbtn" required>Female
                                 </div>
 
                                 <div class="form-group">
@@ -62,7 +88,7 @@
                                     <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
                                 </div>
                                 <div class="form-group form-button">
-                                    <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                                    <input type="submit" name="signupBtn" id="signup" class="form-submit" value="Register"/>
                                 </div>
                             </form>
                         </div>

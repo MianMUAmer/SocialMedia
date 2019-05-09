@@ -1,3 +1,28 @@
+<?php
+session_start();
+require_once './db.php';
+if (isset($_POST["signinBtn"])) {
+    $email = $_POST["email"];
+    $pass = $_POST["pass"];
+    
+    $stmt = $db->prepare("SELECT * FROM userdetails WHERE email = ?");
+    $stmt->execute([$email]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        if (password_verify ($pass, $row['password'])) {
+//        if ($pass == $row['password']){
+            // Success - Login
+            $_SESSION['loginAt'] = time();
+            $_SESSION['user'] = $row;
+            header("Location: dashboard.php");
+            exit;
+        }
+    }
+    $log_err = true;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,7 +38,7 @@
         <script src="js/main.js"></script>
     </head>
     <body>
-        
+
         <div class="main">
             <!-- Sing in  Form -->
             <div id="navBar">MUFASA</div>
@@ -33,16 +58,24 @@
                                     <input type="email" required name="email" id="email" placeholder="Your Email"/>
                                 </div>
                                 <div class="form-group">
-                                    <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                    <input type="password" required name="your_pass" id="your_pass" placeholder="Password"/>
+                                    <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                                    <input type="password" required name="pass" id="your_pass" placeholder="Password"/>
+                                </div>
+                                <div>
+                                    <?php
+                                        if ( isset($log_err)) {
+                                            echo "<p style = 'color: red'>Login Error</p>" ;
+                                        }
+                                    ?>
                                 </div>
                                 <div class="form-group">
                                     <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
                                     <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
                                 </div>
                                 <div class="form-group form-button">
-                                    <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+                                    <input type="submit" name="signinBtn" id="signin" class="form-submit" value="Log in"/>
                                 </div>
+                                
                             </form>
                         </div>
                     </div>
