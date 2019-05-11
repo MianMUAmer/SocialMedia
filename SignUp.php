@@ -39,7 +39,7 @@ if (isset($_POST["signupBtn"])) {
     </head>
     <body>
         <div class="main">
-            <div id="navBar">buds</div>
+            <div id="navBar">MUFASA</div>
             <!-- Sign up form -->
             <section class="signup">
                 <div class="container">
@@ -84,7 +84,7 @@ if (isset($_POST["signupBtn"])) {
 
                                 <div>
                                     <p style="font-weight: 500; padding-bottom: 10px;"> Upload Profile Picture : </p>
-                                    <div id="output"></div>
+                                    <div id="output"><img id="outputimg" src="./images/download.png"></div>
                                     <input id="fileupload" type="file" name="fileupload" accept='image/*' onchange="encodeImageFileAsURL();" required />
                                 </div>
                                 <div>
