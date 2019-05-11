@@ -10,11 +10,11 @@ if (isset($_POST["signinBtn"])) {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($row) {
         if (password_verify ($pass, $row['password'])) {
-//        if ($pass == $row['password']){
             // Success - Login
             $_SESSION['loginAt'] = time();
             $_SESSION['user'] = $row;
-            header("Location: dashboard.php");
+            $id = $row['id'];
+            header("Location: dashboard.php?id=$id");
             exit;
         }
     }

@@ -1,20 +1,26 @@
 <?php
-  session_start() ;
-  require_once './db.php';
-  
-    if ( isset($_POST["signupBtn"])) {
-       extract($_POST) ;
-       $pass = password_hash($pass, PASSWORD_BCRYPT) ;
-       $fulname = $name . ' ' . $srname;
-       try {
-           $stmt = $db->prepare("insert into userdetails (fullname, email, password, gender, bday, picture) values (?,?,?,?,?,?)") ;
-           $stmt->execute( [$fulname,$email, $pass, $Gender,$bday,$fileupload]) ;
-           header("Location: dashboard.php?newUser");
-           exit ;
-       } catch (Exception $ex) {
-          $error = true ;
-       }
-  }
+session_start();
+require_once './db.php';
+
+if (isset($_POST["signupBtn"])) {
+    var_dump($_POST);
+    extract($_POST);
+    $pass = password_hash($pass, PASSWORD_BCRYPT);
+    $fulname = $name . ' ' . $srname;
+    try {
+        $stmt = $db->prepare("insert into userdetails (fullname, email, password, gender, bday, picture) values (?,?,?,?,?,?)");
+        $stmt->execute([$fulname, $email, $pass, $Gender, $bday, $imgURL]);
+        $stmt = $db->prepare("select id from userdetails where email=?");
+        $stmt->execute([$email]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        var_dump($data);
+        $id = $data['id'];
+        header("Location: dashboard.php?id=$id");
+        exit;
+    } catch (Exception $ex) {
+        $error = true;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +39,7 @@
     </head>
     <body>
         <div class="main">
-            <div id="navBar">MUFASA</div>
+            <div id="navBar">buds</div>
             <!-- Sign up form -->
             <section class="signup">
                 <div class="container">
@@ -42,9 +48,9 @@
                             <h2 class="form-title">Sign up</h2>
                             <div>
                                 <?php
-                                    if(isset($error)){
-                                        echo "<p style = 'color: red;'>Error : Email Address Already In Use</p>" ;
-                                    }
+                                if (isset($error)) {
+                                    echo "<p style = 'color: red;'>Error : Email Address Already In Use</p>";
+                                }
                                 ?>
                             </div>
                             <form method="POST" action="" class="register-form" id="register-form">
@@ -78,10 +84,12 @@
 
                                 <div>
                                     <p style="font-weight: 500; padding-bottom: 10px;"> Upload Profile Picture : </p>
-                                    <img id='output' src="./images/download.png">
-                                    <input type='file' name="fileupload" id='fileupload' accept='image/*' onchange='openFile(event)' required>
+                                    <div id="output"></div>
+                                    <input id="fileupload" type="file" name="fileupload" accept='image/*' onchange="encodeImageFileAsURL();" required />
                                 </div>
-
+                                <div>
+                                    <input type="hidden" name="imgURL" id="imgURL"/>
+                                </div>
 
                                 <div class="form-group">
                                     <input type="checkbox" required name='agree-term' id="agree-term" class="agree-term"/>

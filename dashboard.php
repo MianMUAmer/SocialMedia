@@ -1,3 +1,14 @@
+<?php
+    require_once './db.php';
+    extract($_GET);
+    $stmt = $db->prepare("select * from userdetails where id = ?");
+    $stmt->execute([$id]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    var_dump($userData);
+    $ig = base64_decode($userData['picture']);
+    echo $userData['picture'];
+?>
+
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -10,8 +21,7 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+        
     </body>
+    
 </html>

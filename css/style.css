@@ -176,13 +176,21 @@ img {
     max-width: 100%;
     height: auto; }
 
+#output img{
+    width: 160px;
+    height: 140px;
+    border-radius: 50%;
+    behavior: url(PIE.htc);
+    border: 1px white solid;
+}
+
 #output{
     width: 160px;
     height: 140px;
     border-radius: 50%;
     behavior: url(PIE.htc);
     border: 1px white solid;
-    /*object-fit: fill;*/
+    background-image: url(../images/download.png);
 }
 
 figure {
