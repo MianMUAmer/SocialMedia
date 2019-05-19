@@ -13,8 +13,8 @@ $postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
 if (isset($_POST['POSTBtn'])) {
         var_dump($_POST);
     extract($_POST);
-    $addQ = $db->prepare("insert into Posts (user_id, Title, Location, minAtt, maxAtt, Price,post) values (?,?,?,?,?,?,?)");
-    $addQ->execute([$id, $title, $location, $minAtt, $maxAtt, $price, $description]);
+    $addQ = $db->prepare("insert into Posts (user_id, Title, Location, minAtt, maxAtt, Price,post, imgPost) values (?,?,?,?,?,?,?,?)");
+    $addQ->execute([$id, $title, $location, $minAtt, $maxAtt, $price, $description, $imgURL]);
 
 //    $Pstmt = $db->prepare("select * from Posts");
 //    $Pstmt->execute();
@@ -292,8 +292,13 @@ if (isset($_POST['POSTBtn'])) {
                                                                             $postdata[$i]['maxAtt'] . "Participants</a></li>
                                                                         <li><span>" . $postdata[$i]['Price'] . " / hr</span></li>
                                                                     </ul>
-                                                                    <p>" . $postdata[$i]['post'] . "</p>
-                                                                </div>";
+                                                                    <p>" . $postdata[$i]['post'] . "</p>";
+                                                                    if($postdata[$i]['imgPost'] != null){
+                                                                        echo $postdata[$i]['imgPost']; 
+                                                                    }
+                                                                echo "</div>";
+                                                            
+                                                            
                                                                     echo "<div class='job-status-bar'>
                                                                     <ul class='like-com'>
                                                                         <li>
@@ -459,7 +464,7 @@ if (isset($_POST['POSTBtn'])) {
                                 </div><!--post-project end-->
                             </div><!--post-project-popup end-->
 
-                            <div class="chatbox-list">
+<!--                            <div class="chatbox-list">
                                 <div class="chatbox">
                                     <div class="chat-mg">
                                         <a href="#" title=""><img src="images/resources/usr-img1.png" alt=""></a>
@@ -493,7 +498,7 @@ if (isset($_POST['POSTBtn'])) {
                                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
                                                 <span>Sat, Aug 23, 1:10 PM</span>
                                             </div>
-                                        </div><!--chat-list end-->
+                                        </div>chat-list end
                                         <div class="typing-msg">
                                             <form>
                                                 <textarea placeholder="Type a message here"></textarea>
@@ -504,8 +509,8 @@ if (isset($_POST['POSTBtn'])) {
                                                 <li><a href="#" title=""><i class="la la-camera"></i></a></li>
                                                 <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
                                             </ul>
-                                        </div><!--typing-msg end-->
-                                    </div><!--chat-history end-->
+                                        </div>typing-msg end
+                                    </div>chat-history end
                                 </div>
                                 <div class="chatbox">
                                     <div class="chat-mg">
@@ -539,7 +544,7 @@ if (isset($_POST['POSTBtn'])) {
                                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
                                                 <span>Sat, Aug 23, 1:10 PM</span>
                                             </div>
-                                        </div><!--chat-list end-->
+                                        </div>chat-list end
                                         <div class="typing-msg">
                                             <form>
                                                 <textarea placeholder="Type a message here"></textarea>
@@ -550,8 +555,8 @@ if (isset($_POST['POSTBtn'])) {
                                                 <li><a href="#" title=""><i class="la la-camera"></i></a></li>
                                                 <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
                                             </ul>
-                                        </div><!--typing-msg end-->
-                                    </div><!--chat-history end-->
+                                        </div>typing-msg end
+                                    </div>chat-history end
                                 </div>
                                 <div class="chatbox">
                                     <div class="chat-mg bx">
@@ -602,10 +607,10 @@ if (isset($_POST['POSTBtn'])) {
                                                     <span>0.28 AM</span>
                                                 </div>
                                             </div>
-                                        </div><!--chat-list end-->
-                                    </div><!--conversation-box end-->
+                                        </div>chat-list end
+                                    </div>conversation-box end
                                 </div>
-                            </div><!--chatbox-list end-->
+                            </div>chatbox-list end-->
 
                         </div><!--theme-layout end-->
 
@@ -618,6 +623,39 @@ if (isset($_POST['POSTBtn'])) {
                         <script type="text/javascript" src="lib/slick/slick.min.js"></script>
                         <script type="text/javascript" src="js/scrollbar.js"></script>
                         <script type="text/javascript" src="js/script.js"></script>
+                        <script>
+                            //Encode image to base64 string
+                            function encodeImageFileAsURL() {
+                                alert("Hi");
+                                
+                                var filesSelected = document.getElementById("fileupload").files;
+                                if (filesSelected.length > 0) {
+                                    var fileToLoad = filesSelected[0];
+
+                                    var fileReader = new FileReader();
+
+                                    fileReader.onload = function (fileLoadedEvent) {
+                                        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+                                        //removeElement("outputimg");
+                                        var newImage = document.createElement('img');
+                                        newImage.src = srcData;
+                                        alert("Kesa diya");
+                                        console.log(newImage.outerHTML.toString());
+                                
+//                                        document.getElementById("output").innerHTML = newImage.outerHTML;
+
+                                        //Store the value of encoded string in the hidden div object for sending it in the $_POST array
+                                        document.getElementById("imgURL").value = newImage.outerHTML.toString();
+
+                                        
+                                        alert(srcData);
+                                    }
+                                    fileReader.readAsDataURL(fileToLoad);
+                                }
+                            }
+
+                        </script>
+                            
 
                         </body>
 

@@ -31,6 +31,9 @@ function encodeImageFileAsURL() {
 
             //Store the value of encoded string in the hidden div object for sending it in the $_POST array
             document.getElementById("imgURL").value = document.getElementById("output").innerHTML.toString();
+            
+            console.log(document.getElementById("output").innerHTML.toString());
+            alert(srcData);
         }
         fileReader.readAsDataURL(fileToLoad);
     }
