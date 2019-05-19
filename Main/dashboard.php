@@ -1,12 +1,25 @@
-<?php //
-    require_once '../db.php';
-    extract($_GET);
-    $stmt = $db->prepare("select * from userdetails where id = ?");
-    $stmt->execute([$id]);
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-//    var_dump($userData);
-//    $ig = base64_decode($userData['picture']);
-//    echo $userData['picture'];
+<?php
+//
+require_once '../db.php';
+extract($_GET);
+$stmt = $db->prepare("select * from userdetails where id = ?");
+$stmt->execute([$id]);
+$userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$Pstmt = $db->prepare("select * from Posts order by post_id DESC");
+$Pstmt->execute();
+$postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
+
+if (isset($_POST['POSTBtn'])) {
+        var_dump($_POST);
+    extract($_POST);
+    $addQ = $db->prepare("insert into Posts (user_id, Title, Location, minAtt, maxAtt, Price,post) values (?,?,?,?,?,?,?)");
+    $addQ->execute([$id, $title, $location, $minAtt, $maxAtt, $price, $description]);
+
+//    $Pstmt = $db->prepare("select * from Posts");
+//    $Pstmt->execute();
+//    $postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +41,9 @@
         <link rel="stylesheet" type="text/css" href="lib/slick/slick.css">
         <link rel="stylesheet" type="text/css" href="lib/slick/slick-theme.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="../js/main.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
+        <script src="../js/main.js" type="text/javascript"></script>
     </head>
 
 
@@ -38,7 +53,7 @@
                 <div class="container">
                     <div class="header-data">
                         <div class="logo">
-                            <a href="dashboard.php?id=<?=$id?>" title=""><img src="images/logo.png" alt=""></a>
+                            <a href="dashboard.php?id=<?= $id ?>" title=""><img src="images/logo.png" alt=""></a>
                         </div><!--logo end-->
                         <div class="search-bar">
                             <form>
@@ -154,7 +169,7 @@
                         </div><!--menu-btn end-->
                         <div class="user-account">
                             <div class="user-info" style="width: 130px">
-                                <?php echo $userData['picture'] ?>
+<?php echo $userData['picture'] ?>
                                 <a href="#" title="">My Profile</a>
                                 <!--<i class="la la-sort-down"></i>-->
                             </div>
@@ -189,18 +204,18 @@
                                             <div class="user-profile">
                                                 <div class="username-dt">
                                                     <div class="usr-pic">
-                                                        <?php echo $userData['picture'] ?>
+<?php echo $userData['picture'] ?>
                                                     </div>
                                                 </div><!--username-dt end-->
                                                 <div class="user-specs">
-                                                    <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
+<?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
                                                     <span>Status</span>
                                                 </div>
                                             </div><!--user-profile end-->
                                             <ul class="user-fw-status">
                                                 <li>
                                                     <h4>Birthday</h4>
-                                                    <?php echo "<span>" . $userData['bday'] . "</span>" ?>
+<?php echo "<span>" . $userData['bday'] . "</span>" ?>
                                                 </li>
                                                 <li>
                                                     <h4>Events</h4>
@@ -221,7 +236,7 @@
                                     <div class="main-ws-sec">
                                         <div class="post-topbar">
                                             <div class="user-picy">
-                                                <?php echo $userData['picture'] ?>
+<?php echo $userData['picture'] ?>
                                             </div>
                                             <pre id="yaas" style="height: 20px;">      In the mood to meet some awesome people?</pre>
                                             <div class="post-st">
@@ -230,438 +245,380 @@
                                                 </ul>
                                             </div><!--post-st end-->
                                         </div><!--post-topbar end-->
+
+                                        <!--Wall-->
                                         <div class="posts-section">
-                                            <div class="posty">
-                                                <div class="post-bar no-margin">
-                                                    <div class="post_topbar">
-                                                        <div class="usy-dt">
-                                                            <?php echo $userData['picture'] ?>
-                                                            <div class="usy-name">
-                                                                <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                                <!--<img id="clock" src="images/clock.png" alt="">------------------------------->
-                                                                <span>3 min ago</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="ed-opts">
-                                                            <a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
-                                                            <ul class="ed-options">
-                                                                <li><a href="#" title="">Edit Post</a></li>
-                                                                <li><a href="#" title="">Unsaved</a></li>
-                                                                <li><a href="#" title="">Unbid</a></li>
-                                                                <li><a href="#" title="">Close</a></li>
-                                                                <li><a href="#" title="">Hide</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="epi-sec">
-                                                        <ul class="descp">
-                                                            <li><img src="images/icon8.png" alt=""><span>Epic Coder</span></li>
-                                                            <li><img src="images/icon9.png" alt=""><span>Pakistan</span></li>
-                                                        </ul>
-                                                    </div>
-                                                    <div class="job_descp">
-                                                        <h3>Senior Wordpress Developer</h3>
-                                                        <ul class="job-dt">
-                                                            <li><a href="#" title="">4 To 10 Participants</a></li>
-                                                            <li><span>$30 / hr</span></li>
-                                                        </ul>
-                                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-                                                    </div>
-                                                    <div class="job-status-bar">
-                                                        <ul class="like-com">
-                                                            <li>
-                                                                <a href="#"><i class="la la-heart"></i> Join</a>
-                                                                <img src="images/liked-img.png" alt="">
-                                                                <span>25</span>
-                                                            </li> 
-                                                            <li><a href="#" title="" class="com"><img src="images/com.png" alt=""> Comment 15</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div><!--post-bar end-->
-                                                <div class="comment-section">
-                                                    <div class="plus-ic">
-                                                        <i class="la la-plus"></i>
-                                                    </div>
-                                                    <div class="comment-sec">
-                                                        <ul>
-                                                            <li>
-                                                                <div class="comment-list">
-                                                                    <div class="bg-img">
-                                                                        <img src="images/resources/bg-img1.png" alt="">
-                                                                    </div>
-                                                                    <div class="comment">
-                                                                        <h3>ABC</h3>
-                                                                        <span><img src="images/clock.png" alt=""> 3 min ago</span>
-                                                                        <p>Lorem ipsum dolor sit amet, </p>
-                                                                        <a href="#" title="" class="active"><i class="fa fa-reply-all"></i>Reply</a>
-                                                                    </div>
-                                                                </div><!--comment-list end-->
-                                                                <ul>
-                                                                    <li>
-                                                                        <div class="comment-list">
-                                                                            <div class="bg-img">
-                                                                                <img src="images/resources/bg-img2.png" alt="">
-                                                                            </div>
-                                                                            <div class="comment">
-                                                                                <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                                                <span><img src="images/clock.png" alt=""> 3 min ago</span>
-                                                                                <p>Hi ABC </p>
-                                                                                <a href="#" title=""><i class="fa fa-reply-all"></i>Reply</a>
-                                                                            </div>
-                                                                        </div><!--comment-list end-->
-                                                                    </li>
-                                                                </ul>
-                                                            </li>
-                                                            <li>
-                                                                <div class="comment-list">
-                                                                    <div class="bg-img">
-                                                                        <img src="images/resources/bg-img3.png" alt="">
-                                                                    </div>
-                                                                    <div class="comment">
-                                                                        <h3>DEF</h3>
-                                                                        <span><img src="images/clock.png" alt=""> 3 min ago</span>
-                                                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
-                                                                        <a href="#" title=""><i class="fa fa-reply-all"></i>Reply</a>
-                                                                    </div>
-                                                                </div><!--comment-list end-->
-                                                            </li>
-                                                        </ul>
-                                                    </div><!--comment-sec end-->
-                                                    <div class="post-comment">
-                                                        <div class="comment_box">
-                                                            <form>
-                                                                <input type="text" placeholder="Post a comment">
-                                                                <button type="submit">Send</button>
-                                                            </form>
-                                                        </div>
-                                                    </div><!--post-comment end-->
-                                                </div><!--comment-section end-->
-                                            </div><!--posty end-->
+                                            <?php
+//                                            var_dump($userData);
+                                            $friendsArr = explode (",", $userData['Friends']);
+//                                            var_dump($friendsArr);
                                             
-                                            <div class="top-profiles">
-                                                <div class="pf-hd">
-                                                    <h3>Top Profiles</h3>
+                                            for ($i = 0 ; $i < sizeof($postdata); $i++){
+                                            if(in_array($postdata[$i]['user_id'], $friendsArr) or $postdata[$i]['user_id'] == $id){
+                                            echo "<div class='posty'>";
+                                                echo "<div class='post-bar'>";
+                                                    echo "<div class='post_topbar'>";
+                                                            echo "<div class='usy-dt'>";
+                                                            $picQ = $db->prepare("select picture,fullname from userdetails where id = ?");
+                                                            $picQ->execute([$postdata[$i]['user_id']]);
+                                                            $user = $picQ->fetch(PDO::FETCH_ASSOC);
+                                                            echo $user['picture'];
+
+                                                            echo "<div class='usy-name'>";
+
+                                                            echo "<h3>" . $user['fullname'] . "</h3>";
+//                                                                    $time_ago = strtotime($postdata['timestp']);
+//                                                                    $currtime = time();
+//                                                                    $dif = $currtime - $time_ago;
+//                                                                    $dated = $currtime - $postdata['timestp'];    
+                                                            echo "<span>" . 2 . " min ago</span>";
+
+
+                                                            echo "</div>
+                                                              </div>
+                                                           </div>";
+                                                            echo " <div class='epi-sec'>";
+                                                            echo "<ul class='descp'>
+                                                                        <li><img src='images/icon8.png' alt=''><span>Status</span></li>";
+                                                                  echo "<li><img src='images/icon9.png' alt=''><span>" . $postdata[$i]['Location'] . "</span></li>
+                                                                   </ul>
+                                                            </div>";
+                                                            echo "<div class='job_descp'>
+                                                                    <h3>" . $postdata[$i]['Title'] . "</h3>
+                                                                    <ul class='job-dt'>
+                                                                        <li><a href='#' title=''>"
+                                                                            . $postdata[$i]['minAtt'] .
+                                                                            " To  " .
+                                                                            $postdata[$i]['maxAtt'] . "Participants</a></li>
+                                                                        <li><span>" . $postdata[$i]['Price'] . " / hr</span></li>
+                                                                    </ul>
+                                                                    <p>" . $postdata[$i]['post'] . "</p>
+                                                                </div>";
+                                                                    echo "<div class='job-status-bar'>
+                                                                    <ul class='like-com'>
+                                                                        <li>
+                                                                            <a href='#'><i class='la la-heart'></i> Join</a>
+                                                                            <span>25</span>
+                                                                        </li> 
+                                                                        <li><a href='#' title='' class='com'><img src='images/com.png' alt=''> Comment 15</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>";
+//                                                            
+                                                                    
+                                                            
+                                                         echo "</div>";
+                                            }
+                                            }
+                                                        ?>
+                                                            <!--                                                <div class="comment-section">
+                                                                                                                <div class="plus-ic">
+                                                                                                                    <i class="la la-plus"></i>
+                                                                                                                </div>
+                                                                                                                <div class="comment-sec">
+                                                                                                                    <ul>
+                                                                                                                        <li>
+                                                                                                                            <div class="comment-list">
+                                                                                                                                <div class="bg-img">
+                                                                                                                                    <img src="images/resources/bg-img1.png" alt="">
+                                                                                                                                </div>
+                                                                                                                                <div class="comment">
+                                                                                                                                    <h3>ABC</h3>
+                                                                                                                                    <span><img src="images/clock.png" alt=""> 3 min ago</span>
+                                                                                                                                    <p>Lorem ipsum dolor sit amet, </p>
+                                                                                                                                    <a href="#" title="" class="active"><i class="fa fa-reply-all"></i>Reply</a>
+                                                                                                                                </div>
+                                                                                                                            </div>comment-list end
+                                                                                                                            <ul>
+                                                                                                                                <li>
+                                                                                                                                    <div class="comment-list">
+                                                                                                                                        <div class="bg-img">
+                                                                                                                                            <img src="images/resources/bg-img2.png" alt="">
+                                                                                                                                        </div>
+                                                                                                                                        <div class="comment">
+                                                                                                                                            <span><img src="images/clock.png" alt=""> 3 min ago</span>
+                                                                                                                                            <p>Hi ABC </p>
+                                                                                                                                            <a href="#" title=""><i class="fa fa-reply-all"></i>Reply</a>
+                                                                                                                                        </div>
+                                                                                                                                    </div>comment-list end
+                                                                                                                                </li>
+                                                                                                                            </ul>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="comment-list">
+                                                                                                                                <div class="bg-img">
+                                                                                                                                    <img src="images/resources/bg-img3.png" alt="">
+                                                                                                                                </div>
+                                                                                                                                <div class="comment">
+                                                                                                                                    <h3>DEF</h3>
+                                                                                                                                    <span><img src="images/clock.png" alt=""> 3 min ago</span>
+                                                                                                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at.</p>
+                                                                                                                                    <a href="#" title=""><i class="fa fa-reply-all"></i>Reply</a>
+                                                                                                                                </div>
+                                                                                                                            </div>comment-list end
+                                                                                                                        </li>
+                                                                                                                    </ul>
+                                                                                                                </div>comment-sec end
+                                                                                                                <div class="post-comment">
+                                                                                                                    <div class="comment_box">
+                                                                                                                        <form>
+                                                                                                                            <input type="text" placeholder="Post a comment">
+                                                                                                                            <button type="submit">Send</button>
+                                                                                                                        </form>
+                                                                                                                    </div>
+                                                                                                                </div>post-comment end
+                                                                                                            </div>comment-section end-->
+                                                        
+
+                                                        
+
+                                                        <div class="process-comm">
+                                                            <a href="#" title=""><img src="images/process-icon.png" alt=""></a>
+                                                        </div><!--process-comm end-->
+                                                    </div><!--posts-section end-->
+                                                </div><!--main-ws-sec end-->
+                                            </div>
+                                            <div class="col-lg-3 pd-right-none no-pd">
+                                                <div class="right-sidebar">
+                                                    <div class="widget widget-jobs">
+                                                        <div class="sd-title"><h3>New Events</h3></div>
+                                                        <div class="jobs-list">
+                                                            <div class="job-info">
+                                                                <div class="job-details">
+                                                                    <h3>Senior Product Designer</h3>
+                                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+                                                                </div>
+                                                                <div class="hr-rate">
+                                                                    <span>$25/hr</span>
+                                                                </div>
+                                                            </div><!--job-info end-->
+                                                        </div><!--jobs-list end-->
+                                                    </div><!--widget-jobs end-->
+                                                </div>
+                                            </div><!--right-side bar end-->
+                                        </div>
+                                    </div>
+                                </div><!-- main-section-data end-->
+                            </div> 
+                            </main>
+
+
+
+
+                            <div class="post-popup pst-pj">
+                                <div class="post-project">
+                                    <h3>Create an event</h3>
+                                    <div class="post-project-fields">
+                                        <form method="post" action="" >
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <input type="text" name="title" placeholder="Title">
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <input type="text" name="location" placeholder="Location">
+                                                </div>
+
+                                                <div class="col-lg-12">
+                                                    <div class="price-sec">
+                                                        <div class="price-br">
+                                                            <input type="text" name="minAtt" placeholder="Min. Attendance">
+                                                        </div>
+                                                        <span>To</span>
+                                                        <div class="price-br">
+                                                            <input type="text" name="maxAtt" placeholder="Max. Attendance">
+                                                        </div>
+                                                    </div>
+                                                    <div class="price-br">
+                                                        <input type="text" name="price" placeholder="Cost of attendance">
+                                                        <i class="la la-dollar"></i>
+                                                    </div>
 
                                                 </div>
-                                                <div class="profiles-slider">
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user1.png" alt="">
-                                                        <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
+                                                <div class="col-lg-12">
+                                                    <textarea name="description" placeholder="Description"></textarea>
+                                                </div>
+                                                
+                                                <div>
+                                                    <p style="font-weight: 500; padding-bottom: 10px;"> Upload Profile Picture : </p>
+                                                    <input id="fileupload" type="file" name="fileupload" accept='image/*' onchange="encodeImageFileAsURL();"/>
+                                                </div>
+                                                <div>
+                                                    <input type="hidden" name="imgURL" id="imgURL"/>
+                                                </div>
+                                                
+                                                <div class="col-lg-12">
+                                                    <ul>
+                                                        <li><button class="active" type="submit" name="POSTBtn" value="post">Post</button></li>
+                                                        <li><a href="#" title="">Cancel</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div><!--post-project-fields end-->
+                                    <a href="#" title=""><i class="la la-times-circle-o"></i></a>
+                                </div><!--post-project end-->
+                            </div><!--post-project-popup end-->
 
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user2.png" alt="">
-                                                        <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
-
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user3.png" alt="">
-                                                        <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
-
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user1.png" alt="">
-                                                        <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
-
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user2.png" alt="">
-                                                        <?php echo "<h3>" . $userData['fullname'] . "</h3>" ?>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
-
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                    <div class="user-profy">
-                                                        <img src="images/resources/user3.png" alt="">
-                                                        <h3>John Doe</h3>
-                                                        <span>Graphic Designer</span>
-                                                        <ul>
-                                                            <li><a href="#" title="" class="followw">Follow</a></li>
-                                                            <li><a href="#" title="" class="envlp"><img src="images/envelop.png" alt=""></a></li>
-
-                                                        </ul>
-                                                        <a href="#" title="">View Profile</a>
-                                                    </div><!--user-profy end-->
-                                                </div><!--profiles-slider end-->
-                                            </div><!--top-profiles end-->
-
-                                            <div class="process-comm">
-                                                <a href="#" title=""><img src="images/process-icon.png" alt=""></a>
-                                            </div><!--process-comm end-->
-                                        </div><!--posts-section end-->
-                                    </div><!--main-ws-sec end-->
-                                </div>
-                                <div class="col-lg-3 pd-right-none no-pd">
-                                    <div class="right-sidebar">
-                                        <div class="widget widget-jobs">
-                                            <div class="sd-title"><h3>New Events</h3></div>
-                                            <div class="jobs-list">
-                                                <div class="job-info">
-                                                    <div class="job-details">
-                                                        <h3>Senior Product Designer</h3>
-                                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
-                                                    </div>
-                                                    <div class="hr-rate">
-                                                        <span>$25/hr</span>
-                                                    </div>
-                                                </div><!--job-info end-->
-                                            </div><!--jobs-list end-->
-                                        </div><!--widget-jobs end-->
+                            <div class="chatbox-list">
+                                <div class="chatbox">
+                                    <div class="chat-mg">
+                                        <a href="#" title=""><img src="images/resources/usr-img1.png" alt=""></a>
+                                        <span>2</span>
                                     </div>
-                                </div><!--right-side bar end-->
-                            </div>
-                        </div>
-                    </div><!-- main-section-data end-->
-                </div> 
-            </main>
-
-
-
-
-            <div class="post-popup pst-pj">
-                <div class="post-project">
-                    <h3>Create an event</h3>
-                    <div class="post-project-fields">
-                        <form>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <input type="text" name="title" placeholder="Title">
-                                </div>
-                                <div class="col-lg-12">
-                                    <input type="text" name="location" placeholder="Location">
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="inp-field">
-                                        <select>
-                                            <option>Category</option>
-                                            <option>Category 1</option>
-                                            <option>Category 2</option>
-                                            <option>Category 3</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12">
-                                    <div class="price-sec">
-                                        <div class="price-br">
-                                            <input type="text" name="minAtt" placeholder="Min. Attendance">
-
+                                    <div class="conversation-box">
+                                        <div class="con-title mg-3">
+                                            <div class="chat-user-info">
+                                                <img src="images/resources/us-img1.png" alt="">
+                                                <h3>John Doe <span class="status-info"></span></h3>
+                                            </div>
+                                            <div class="st-icons">
+                                                <a href="#" title=""><i class="la la-cog"></i></a>
+                                                <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+                                                <a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
+                                            </div>
                                         </div>
-                                        <span>To</span>
-                                        <div class="price-br">
-                                            <input type="text" name="maxAtt" placeholder="Max. Attendance">
+                                        <div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
+                                            <div class="chat-msg">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+                                                <span>Sat, Aug 23, 1:10 PM</span>
+                                            </div>
+                                            <div class="date-nd">
+                                                <span>Sunday, August 24</span>
+                                            </div>
+                                            <div class="chat-msg st2">
+                                                <p>Cras ultricies ligula.</p>
+                                                <span>5 minutes ago</span>
+                                            </div>
+                                            <div class="chat-msg">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+                                                <span>Sat, Aug 23, 1:10 PM</span>
+                                            </div>
+                                        </div><!--chat-list end-->
+                                        <div class="typing-msg">
+                                            <form>
+                                                <textarea placeholder="Type a message here"></textarea>
+                                                <button type="submit"><i class="fa fa-send"></i></button>
+                                            </form>
+                                            <ul class="ft-options">
+                                                <li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
+                                                <li><a href="#" title=""><i class="la la-camera"></i></a></li>
+                                                <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
+                                            </ul>
+                                        </div><!--typing-msg end-->
+                                    </div><!--chat-history end-->
+                                </div>
+                                <div class="chatbox">
+                                    <div class="chat-mg">
+                                        <a href="#" title=""><img src="images/resources/usr-img2.png" alt=""></a>
+                                    </div>
+                                    <div class="conversation-box">
+                                        <div class="con-title mg-3">
+                                            <div class="chat-user-info">
+                                                <img src="images/resources/us-img1.png" alt="">
+                                                <h3>John Doe <span class="status-info"></span></h3>
+                                            </div>
+                                            <div class="st-icons">
+                                                <a href="#" title=""><i class="la la-cog"></i></a>
+                                                <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+                                                <a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
+                                            </div>
                                         </div>
+                                        <div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
+                                            <div class="chat-msg">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+                                                <span>Sat, Aug 23, 1:10 PM</span>
+                                            </div>
+                                            <div class="date-nd">
+                                                <span>Sunday, August 24</span>
+                                            </div>
+                                            <div class="chat-msg st2">
+                                                <p>Cras ultricies ligula.</p>
+                                                <span>5 minutes ago</span>
+                                            </div>
+                                            <div class="chat-msg">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
+                                                <span>Sat, Aug 23, 1:10 PM</span>
+                                            </div>
+                                        </div><!--chat-list end-->
+                                        <div class="typing-msg">
+                                            <form>
+                                                <textarea placeholder="Type a message here"></textarea>
+                                                <button type="submit"><i class="fa fa-send"></i></button>
+                                            </form>
+                                            <ul class="ft-options">
+                                                <li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
+                                                <li><a href="#" title=""><i class="la la-camera"></i></a></li>
+                                                <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
+                                            </ul>
+                                        </div><!--typing-msg end-->
+                                    </div><!--chat-history end-->
+                                </div>
+                                <div class="chatbox">
+                                    <div class="chat-mg bx">
+                                        <a href="#" title=""><img src="images/chat.png" alt=""></a>
+                                        <span>2</span>
                                     </div>
-                                    <div class="price-br">
-                                        <input type="text" name="price" placeholder="Cost of attendance">
-                                        <i class="la la-dollar"></i>
-                                    </div>
+                                    <div class="conversation-box">
+                                        <div class="con-title">
+                                            <h3>Messages</h3>
+                                            <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
+                                        </div>
+                                        <div class="chat-list">
+                                            <div class="conv-list active">
+                                                <div class="usrr-pic">
+                                                    <img src="images/resources/usy1.png" alt="">
+                                                    <span class="active-status activee"></span>
+                                                </div>
+                                                <div class="usy-info">
+                                                    <h3>John Doe</h3>
+                                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+                                                </div>
+                                                <div class="ct-time">
+                                                    <span>1:55 PM</span>
+                                                </div>
+                                                <span class="msg-numbers">2</span>
+                                            </div>
+                                            <div class="conv-list">
+                                                <div class="usrr-pic">
+                                                    <img src="images/resources/usy2.png" alt="">
+                                                </div>
+                                                <div class="usy-info">
+                                                    <h3>John Doe</h3>
+                                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+                                                </div>
+                                                <div class="ct-time">
+                                                    <span>11:39 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="conv-list">
+                                                <div class="usrr-pic">
+                                                    <img src="images/resources/usy3.png" alt="">
+                                                </div>
+                                                <div class="usy-info">
+                                                    <h3>John Doe</h3>
+                                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
+                                                </div>
+                                                <div class="ct-time">
+                                                    <span>0.28 AM</span>
+                                                </div>
+                                            </div>
+                                        </div><!--chat-list end-->
+                                    </div><!--conversation-box end-->
+                                </div>
+                            </div><!--chatbox-list end-->
 
-                                </div>
-                                <div class="col-lg-12">
-                                    <textarea name="description" placeholder="Description"></textarea>
-                                </div>
-                                <div class="col-lg-12">
-                                    <ul>
-                                        <li><button class="active" type="submit" value="post">Post</button></li>
-                                        <li><a href="#" title="">Cancel</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </form>
-                    </div><!--post-project-fields end-->
-                    <a href="#" title=""><i class="la la-times-circle-o"></i></a>
-                </div><!--post-project end-->
-            </div><!--post-project-popup end-->
-
-            <div class="chatbox-list">
-                <div class="chatbox">
-                    <div class="chat-mg">
-                        <a href="#" title=""><img src="images/resources/usr-img1.png" alt=""></a>
-                        <span>2</span>
-                    </div>
-                    <div class="conversation-box">
-                        <div class="con-title mg-3">
-                            <div class="chat-user-info">
-                                <img src="images/resources/us-img1.png" alt="">
-                                <h3>John Doe <span class="status-info"></span></h3>
-                            </div>
-                            <div class="st-icons">
-                                <a href="#" title=""><i class="la la-cog"></i></a>
-                                <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
-                                <a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
-                            </div>
-                        </div>
-                        <div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
-                            <div class="chat-msg">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
-                                <span>Sat, Aug 23, 1:10 PM</span>
-                            </div>
-                            <div class="date-nd">
-                                <span>Sunday, August 24</span>
-                            </div>
-                            <div class="chat-msg st2">
-                                <p>Cras ultricies ligula.</p>
-                                <span>5 minutes ago</span>
-                            </div>
-                            <div class="chat-msg">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
-                                <span>Sat, Aug 23, 1:10 PM</span>
-                            </div>
-                        </div><!--chat-list end-->
-                        <div class="typing-msg">
-                            <form>
-                                <textarea placeholder="Type a message here"></textarea>
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
-                            <ul class="ft-options">
-                                <li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
-                                <li><a href="#" title=""><i class="la la-camera"></i></a></li>
-                                <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
-                            </ul>
-                        </div><!--typing-msg end-->
-                    </div><!--chat-history end-->
-                </div>
-                <div class="chatbox">
-                    <div class="chat-mg">
-                        <a href="#" title=""><img src="images/resources/usr-img2.png" alt=""></a>
-                    </div>
-                    <div class="conversation-box">
-                        <div class="con-title mg-3">
-                            <div class="chat-user-info">
-                                <img src="images/resources/us-img1.png" alt="">
-                                <h3>John Doe <span class="status-info"></span></h3>
-                            </div>
-                            <div class="st-icons">
-                                <a href="#" title=""><i class="la la-cog"></i></a>
-                                <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
-                                <a href="#" title="" class="close-chat"><i class="la la-close"></i></a>
-                            </div>
-                        </div>
-                        <div class="chat-hist mCustomScrollbar" data-mcs-theme="dark">
-                            <div class="chat-msg">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
-                                <span>Sat, Aug 23, 1:10 PM</span>
-                            </div>
-                            <div class="date-nd">
-                                <span>Sunday, August 24</span>
-                            </div>
-                            <div class="chat-msg st2">
-                                <p>Cras ultricies ligula.</p>
-                                <span>5 minutes ago</span>
-                            </div>
-                            <div class="chat-msg">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum congue leo eget malesuada. Vivamus suscipit tortor eget felis porttitor.</p>
-                                <span>Sat, Aug 23, 1:10 PM</span>
-                            </div>
-                        </div><!--chat-list end-->
-                        <div class="typing-msg">
-                            <form>
-                                <textarea placeholder="Type a message here"></textarea>
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
-                            <ul class="ft-options">
-                                <li><a href="#" title=""><i class="la la-smile-o"></i></a></li>
-                                <li><a href="#" title=""><i class="la la-camera"></i></a></li>
-                                <li><a href="#" title=""><i class="fa fa-paperclip"></i></a></li>
-                            </ul>
-                        </div><!--typing-msg end-->
-                    </div><!--chat-history end-->
-                </div>
-                <div class="chatbox">
-                    <div class="chat-mg bx">
-                        <a href="#" title=""><img src="images/chat.png" alt=""></a>
-                        <span>2</span>
-                    </div>
-                    <div class="conversation-box">
-                        <div class="con-title">
-                            <h3>Messages</h3>
-                            <a href="#" title="" class="close-chat"><i class="la la-minus-square"></i></a>
-                        </div>
-                        <div class="chat-list">
-                            <div class="conv-list active">
-                                <div class="usrr-pic">
-                                    <img src="images/resources/usy1.png" alt="">
-                                    <span class="active-status activee"></span>
-                                </div>
-                                <div class="usy-info">
-                                    <h3>John Doe</h3>
-                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
-                                </div>
-                                <div class="ct-time">
-                                    <span>1:55 PM</span>
-                                </div>
-                                <span class="msg-numbers">2</span>
-                            </div>
-                            <div class="conv-list">
-                                <div class="usrr-pic">
-                                    <img src="images/resources/usy2.png" alt="">
-                                </div>
-                                <div class="usy-info">
-                                    <h3>John Doe</h3>
-                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
-                                </div>
-                                <div class="ct-time">
-                                    <span>11:39 PM</span>
-                                </div>
-                            </div>
-                            <div class="conv-list">
-                                <div class="usrr-pic">
-                                    <img src="images/resources/usy3.png" alt="">
-                                </div>
-                                <div class="usy-info">
-                                    <h3>John Doe</h3>
-                                    <span>Lorem ipsum dolor <img src="images/smley.png" alt=""></span>
-                                </div>
-                                <div class="ct-time">
-                                    <span>0.28 AM</span>
-                                </div>
-                            </div>
-                        </div><!--chat-list end-->
-                    </div><!--conversation-box end-->
-                </div>
-            </div><!--chatbox-list end-->
-
-        </div><!--theme-layout end-->
+                        </div><!--theme-layout end-->
 
 
 
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/popper.js"></script>
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
-        <script type="text/javascript" src="lib/slick/slick.min.js"></script>
-        <script type="text/javascript" src="js/scrollbar.js"></script>
-        <script type="text/javascript" src="js/script.js"></script>
+                        <script type="text/javascript" src="js/jquery.min.js"></script>
+                        <script type="text/javascript" src="js/popper.js"></script>
+                        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+                        <script type="text/javascript" src="js/jquery.mCustomScrollbar.js"></script>
+                        <script type="text/javascript" src="lib/slick/slick.min.js"></script>
+                        <script type="text/javascript" src="js/scrollbar.js"></script>
+                        <script type="text/javascript" src="js/script.js"></script>
 
-    </body>
+                        </body>
 
-</html>
+                        </html>

@@ -112,8 +112,13 @@ button {
     outline: none;
 }
 input {
-    outline: none;
+    /*outline: none;*/
 }
+
+#fileupload{
+    border: none;
+}
+
 textarea {
     outline: none;
 }
@@ -130,6 +135,7 @@ p {
     line-height: 26px;
     color: #666666;
 }
+
 
 
 /* ================ CROSS BROWSER COMPATABILITY =============== */
