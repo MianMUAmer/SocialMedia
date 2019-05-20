@@ -368,6 +368,17 @@ $(document).ready(function(){
                                                 $size = 10 ;
                                             }
                                             for ($i = 0 ; $i < $size; $i++){
+                                                 try {
+                                                                $sql="select count(*) as total from Likes where postID= ?";
+                                                                $stmt=$db->prepare($sql);
+                                                                $stmt->execute([$postdata[$i]['post_id']]);
+                                                                
+                                                                $likeCount=$stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                                                            } catch (Exception $exc) {
+                                                                echo "Sql error" .$exc->getMessage();
+                                                            }
+                                                
+                                                
                                             if(in_array($postdata[$i]['user_id'], $friendsArr) or $postdata[$i]['user_id'] == $id){
                                             echo "<div class='posty'>";
                                                 echo "<div class='post-bar'>";
@@ -416,8 +427,8 @@ $(document).ready(function(){
                                                                     echo "<div class='job-status-bar'>
                                                                     <ul class='like-com'>
                                                                         <li>
-                                                                            <a href='#'><i class='la la-heart'></i> Join</a>
-                                                                            <span>25</span>
+                                                                            <a href='likeprocess.php?id=$id&postId={$postdata[$i]['post_id']}'><i class='la la-heart'></i>Joi</a>
+                                                                            <span>$likeCount</span>
                                                                         </li> 
                                                                         <li><a href='#' title='' class='com'><img src='images/com.png' alt=''> Comment 15</a></li>
                                                                     </ul>
