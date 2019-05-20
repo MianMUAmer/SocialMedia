@@ -15,7 +15,7 @@ if (isset($_POST["signupBtn"])) {
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         var_dump($data);
         $id = $data['id'];
-        header("Location: Main/dashboard.php?id=$id");
+        header("Location: Main/dash.php?id=$id");
         exit;
     } catch (Exception $ex) {
         $error = true;

@@ -2,7 +2,8 @@
 //
 require_once '../db.php';
 session_start();
-var_dump($_SESSION);
+//var_dump($_SESSION);
+
 extract($_GET);
 $stmt = $db->prepare("select * from userdetails where id = ?");
 $stmt->execute([$id]);
@@ -13,14 +14,14 @@ $Pstmt->execute();
 $postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (isset($_POST['POSTBtn'])) {
-        var_dump($_POST);
+//        var_dump($_POST);
     extract($_POST);
     $addQ = $db->prepare("insert into Posts (user_id, Title, Location, minAtt, maxAtt, Price,post, imgPost) values (?,?,?,?,?,?,?,?)");
     $addQ->execute([$id, $title, $location, $minAtt, $maxAtt, $price, $description, $imgURL]);
 
-//    $Pstmt = $db->prepare("select * from Posts");
-//    $Pstmt->execute();
-//    $postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
+    $Pstmt = $db->prepare("select * from Posts");
+    $Pstmt->execute();
+    $postdata = $Pstmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 try{
@@ -65,9 +66,9 @@ unset($stmnt);
 unset($pddo);
 
 if(isset($_POST["addF"])){
-    $nstmt = $db->prepare("Insert into Notifications(nto, nfrom) values (?,?)");
+    $nstmt = $db->prepare("Insert into Notifications(nto, nfrom, decision) values (?,?, ?)");
     extract($_GET);
-    $nstmt->execute([$id,$curid]);
+    $nstmt->execute([$id,$curid,"pending"]);
 }
 ?>
 
@@ -76,7 +77,7 @@ if(isset($_POST["addF"])){
 
     <head>
         <meta charset="UTF-8">
-        <title>Home</title>
+        <title><?=$_SESSION['user']['fullname']?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="" />
         <meta name="keywords" content="" />
@@ -102,7 +103,7 @@ $(document).ready(function(){
         var resultDropdown = $(this).siblings(".result");
         if($inputVal.length){
             var aaa= String($inputVal);
-            aaa +=":" + <?php echo $_SESSION['user']['id'];?>;
+            aaa +=":" + <?php echo $_SESSION["user"]["id"];?>;
             
             $.get("backend-search-pdo-format", {term: aaa}).done(function(data){
                 // Display the returned data in browser
@@ -129,7 +130,7 @@ $(document).ready(function(){
                 <div class="container">
                     <div class="header-data">
                         <div class="logo">
-                            <a href="dash?id=<?= $id ?>" title=""><img src="images/logo.png" alt=""></a>
+                            <a href="dash.php?id=<?= $id ?>" title=""><img src="images/logo.png" alt=""></a>
                         </div><!--logo end-->
                         <div class="search-bar">
                             <form>
@@ -143,9 +144,9 @@ $(document).ready(function(){
                         </div><!--search-bar end-->
                         <nav>
                             <ul>
-                                <li><a href="index.html" title=""><span><img src="images/icon1.png" alt=""></span>Home</a></li>
-                                <li><a href="profiles.html" title=""> <span><img src="images/icon4.png" alt=""></span>People</a></li>
-<!--                                <li>
+                                <li><a href="dash.php?id=<?=$_SESSION['user']['id']?>" title=""><span><img src="images/icon1.png" alt=""></span>Home</a></li>
+<!--                                <li><a href="profiles.html" title=""> <span><img src="images/icon4.png" alt=""></span>People</a></li>
+                                <li>
                                     <a href="#" title="" class="not-box-open"><span><img src="images/icon6.png" alt=""></span>Messages</a>
                                     <div class="notification-box msg">
                                         <div class="nt-title">
@@ -190,39 +191,43 @@ $(document).ready(function(){
                                     </div>notification-box end
                                 </li>-->
                                 <li>
-                                    <button href="#" title="" id="btnJSON" class="not-box-open">
+                                    <a href="#" title="" class="not-box-open">
                                         <span><img src="images/icon7.png" alt=""></span>
                                         Notification
-                                    </button>
-                                    <script>
-                                        // JSON data from a file
-             $("#btnJSON").click(function(){
-                $.getJSON("data.php", function(data){
-                    var out = "" ;
-                    for ( var i=0; i<data.length; i++) {
-                        out += data[i].nfrom;
-                        out += " Sent You Friend Request"
-                        out += "</br>" ;
-                    }
-                    $("#peopleContainer").html(out) ;
-                }) ; 
-             });
-                                    </script>
-                                    <div id="peopleContainer"></div>
+                                    </a>
                                     <div class="notification-box">
+                                        
                                         <div class="nott-list">
+                                            <?php
+                                            
+                                            $s = $db->prepare("select * from Notifications where nto = ?");
+                                            $s->execute([$_SESSION["user"]["id"]]);
+                                            $u = $s->fetch(PDO::FETCH_ASSOC);
+                                            
+                                            if(isset($u))
+                                            { 
+                                                $f = $db->prepare("select * from userdetails where id = ?");
+                                                $f->execute([$u["nfrom"]]);
+                                                $wri = $f->fetch(PDO::FETCH_ASSOC);
+                                            }
+                                            
+                                            
+                                            isset($wri)?$dis=$wri['fullname']." sent you a friend request":$dis="No friend requests";
+                                            
+                                            ?>
                                             <div class="notfication-details">
-                                                <div class="noty-user-img">
-                                                    <img src="images/resources/ny-img1.png" alt="">
-                                                </div>
+<!--                                                <div class="noty-user-img">
+                                                    <img src="images/resources/ny-img2.png" alt="">
+                                                </div>-->
+                                                
                                                 <div class="notification-info">
-                                                    <h3><a href="#" title="">Jassica William</a> Comment on your project.</h3>
-                                                    <span>2 min ago</span>
+                                                    <h3><?php echo '<a href="#" title="">'.$dis.'</a>';?></h3>
+                                                    
                                                 </div><!--notification-info -->
                                             </div>
-                                            <div class="view-all-nots">
-                                                <a href="#" title="">Notification</a>
-                                            </div>
+<!--                                            <div class="view-all-nots">
+                                                <a href="#" title="">View All Notification</a>
+                                            </div>-->
                                         </div><!--nott-list end-->
                                     </div><!--notification-box end-->
                                 </li>
@@ -233,7 +238,7 @@ $(document).ready(function(){
                         </div><!--menu-btn end-->
                         <div class="user-account">
                             <div class="user-info" style="width: 130px">
-<?php echo $userData['picture'] ?>
+<?php echo $_SESSION['user']['picture'] ?>
                                 <a href="#" title="">My Profile</a>
                                 <!--<i class="la la-sort-down"></i>-->
                             </div>
@@ -250,7 +255,7 @@ $(document).ready(function(){
                                     <li><a href="#" title="">Faqs</a></li>
                                     <li><a href="#" title="">Terms & Conditions</a></li>
                                 </ul>
-                                <h3 class="tc"><a href="#" title="">Logout</a></h3>
+                                <h3 class="tc"><a href="logout.php" title="">Logout</a></h3>
                             </div><!--user-account-settingss end-->
                         </div>
                     </div><!--header-data end-->
@@ -281,15 +286,39 @@ $(document).ready(function(){
                                                 
                                                 
                                                 if(isset($curid)){
-                                                if(strpos($userData['Friends'], $curid) == false)
+                                                
+                                                $stm = $db->prepare("select * from userdetails where id = ?");
+                                                $stmt->execute([$_SESSION['user']['id']]);
+                                                $f = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//                                                var_dump($f);
+                                                if(strpos($f[0]['Friends'], $id) == false)
                                                 {       echo "<form method='post' action=''>";
                                                         echo "<button type='submit' name='addF' style='color:white; padding: 10px 10px 10px 10px; margin-bottom: 10px; border-radius: 8px; background-color: #e44d3a'>Add Friend</button>";
                                                         echo "</form>";
-                                                }else{
+                                                        
+                                                        $st = $f[0]['Friends'].",".$id;
+                                                        
+                                                        //$ns = $db=>prepare("Insert into Notifications(nto, nfrom) values (?,?)");
+                                                        
+                                                        
+//                                                        $ns = $db->prepare("UPDATE userdetails SET Friends = ? WHERE id = ?");
+//                                                        
+//                                                        $ns->execute([$st, $_SESSION["user"]["id"]]);
+
+                                                        
+                                                }else {
                                                     echo "<button style='color:white; padding: 10px 10px 10px 10px; margin-bottom: 10px; border-radius: 8px; background-color: #e44d3a'>Friend Added</button>";
                                                 }
                                                 
                                                 }
+                                                
+                                                $q1 = $db->prepare("select count(*) from Posts where user_id=?");
+                                                $q1->execute([$userData['id']]);
+                                                $numofEvents = $q1->fetch(PDO::FETCH_ASSOC);
+                                                $q1 = $db->prepare("select Friends from userdetails where id=?");
+                                                $q1->execute([$userData['id']]);
+                                                $frands = $q1->fetch(PDO::FETCH_ASSOC);
+                                                $numofFriends = sizeof(explode (",", $frands['Friends']));
                                                 ?>
                                                 <li>
                                                     <h4>Birthday</h4>
@@ -297,11 +326,11 @@ $(document).ready(function(){
                                                 </li>
                                                 <li>
                                                     <h4>Events</h4>
-                                                    <span>34</span>
+                                                    <span><?=$numofEvents['count(*)']?></span>
                                                 </li>
                                                 <li>
                                                     <h4>Followers</h4>
-                                                    <span>155</span>
+                                                    <span><?=$numofFriends?></span>
                                                 </li>
                                                 <li>
                                                     <a href="#" title="">View Profile</a>
@@ -330,8 +359,15 @@ $(document).ready(function(){
 //                                            var_dump($userData);
                                             $friendsArr = explode (",", $userData['Friends']);
 //                                            var_dump($friendsArr);
-                                            
-                                            for ($i = 0 ; $i < sizeof($postdata); $i++){
+                                            if(isset($_GET['pg'])){
+//                                                var_dump($_GET);
+                                                extract($_GET);
+                                                $size = $size + 10 >= sizeof($postdata) ? sizeof($postdata) : $size + 10;
+                                                unset($_GET['pg']);
+                                            }else{
+                                                $size = 10 ;
+                                            }
+                                            for ($i = 0 ; $i < $size; $i++){
                                             if(in_array($postdata[$i]['user_id'], $friendsArr) or $postdata[$i]['user_id'] == $id){
                                             echo "<div class='posty'>";
                                                 echo "<div class='post-bar'>";
@@ -456,7 +492,7 @@ $(document).ready(function(){
                                                         
 
                                                         <div class="process-comm">
-                                                            <a href="#" title=""><img src="images/process-icon.png" alt=""></a>
+                                                            <a href="dash.php?id=<?=$_SESSION['user']['id']?>&pg=u&size=<?=$size?>" title=""><img src="images/process-icon.png" alt=""></a>
                                                         </div><!--process-comm end-->
                                                     </div><!--posts-section end-->
                                                 </div><!--main-ws-sec end-->

@@ -14,7 +14,7 @@ if (isset($_POST["signinBtn"])) {
             $_SESSION['loginAt'] = time();
             $_SESSION['user'] = $row;
             $id = $row['id'];
-            header("Location: Main/dashboard.php?id=$id");
+            header("Location: Main/dash.php?id=$id");
             exit;
         }
     }

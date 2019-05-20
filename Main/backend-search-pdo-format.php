@@ -30,7 +30,7 @@ try{
             while($row = $stmt->fetch()){
                 $iid = $row["id"];
                 //isset($cid)?$cid=$userData['id']:$cid="";
-                echo "<a href='dashboardnew.php?id=$iid&curid=$both[1]'>" . $row["fullname"]."</a><br>";
+                echo "<a href='dash.php?id=$iid&curid=$both[1]'>" . $row["fullname"]."</a><br>";
             }
         } else{
             echo "<p>No matches found</p>";
